@@ -5,13 +5,14 @@
 
 <script>
 	import { onMount, tick, onDestroy } from 'svelte';
-	import {writable} from 'svelte/store';
+	import { writable } from 'svelte/store';
 
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
-	import { Send, ChevronDown } from 'lucide-svelte';
+	import { ArrowBigUp } from 'lucide-svelte';
+
 
 	let messages = writable([]);
 	let currentMessage = writable('');
@@ -25,7 +26,7 @@
 	let messageInProgress = true;
 	let messageID = 0;
 
-	let isThinking = false;
+	let isThinking = $state(false);
 
 
 	onMount(() => {
@@ -35,24 +36,23 @@
 
 		websocket.onopen = () => {
 			isConnected = true;
-		}
+		};
 
 		websocket.onclose = () => {
 			isConnected = false;
-		}
+		};
 
 		websocket.onerror = () => {
 			isConnected = false;
-		}
+		};
 
 
-
-		websocket.onmessage = (event) =>
-		{
+		websocket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			isThinking = false;
 			if (data.content)
 				currentMessage.update(i => i + data.content);
+
 			if (data.status && data.status === 'complete') {
 				messageInProgress = true;
 				messageID++;
@@ -62,22 +62,17 @@
 					{
 						id: messageID,
 						role: 'assistant',
-						content: $currentMessage,
+						content: $currentMessage
 
 					}
-				])
+				]);
 				currentMessage.set('');
 
-				}
-
-		}
-
-
-	})
+			}
+		};
 
 
-
-
+	});
 
 
 	function sendMessage() {
@@ -88,27 +83,27 @@
 				{
 					id: messageID,
 					role: 'user',
-					content: userInput,
+					content: userInput
 				}
-			])
+			]);
 
 			isThinking = true;
-			websocket.send(JSON.stringify({content: userInput}));
+			websocket.send(JSON.stringify({ content: userInput }));
 			userInput = '';
 		}
 	}
-
-
-
 
 
 	$effect.pre(() => {
 		messages;
 		const autoscroll = scrollContainer && scrollContainer.offsetHeight + scrollContainer.scrollTop > scrollContainer.scrollHeight - 200;
 
-		if (autoscroll) {
+		if ($messages.length > 0) {
 			tick().then(() => {
-				scrollContainer.scrollTo(0, scrollContainer.scrollHeight);
+				scrollContainer.scrollTo({
+					top: scrollContainer.scrollHeight,
+					behavior: 'smooth',
+				});
 			});
 		}
 	});
@@ -127,9 +122,9 @@
 	<!-- Chat container with messages -->
 	<div
 		class="relative flex flex-col rounded-lg border bg-card text-card-foreground shadow"
-		style="height: calc(100vh - 340px); min-height: 400px;"
+		style="height: calc(100vh - 275px); min-height: 400px;"
 	>
-		<!-- Scrollable message area -->
+
 		<div
 			bind:this={scrollContainer}
 			class="flex-1 overflow-y-auto p-4 pb-0"
@@ -148,17 +143,17 @@
 							</div>
 							<div
 								class="text-muted-foreground rounded-lg p-3 bg-{message.role === 'assistant' ? 'transparent' : 'muted'}">
-
 								{message.content}
+
 							</div>
 						</div>
 					</div>
 				</div>
 			{/each}
 
-
-
-
+			{#if isThinking}
+				<div class="pl-3 animate-pulse">...</div>
+			{/if}
 
 
 			<div class="h-4"></div> <!-- Extra space at bottom for better scrolling -->
@@ -170,7 +165,7 @@
 		<!-- Message input area -->
 		<form
 			class="flex items-end gap-2 p-4"
-			on:submit|preventDefault={sendMessage}
+			onsubmit={sendMessage}
 		>
 			<div class="relative flex-1">
 				<Input
@@ -185,7 +180,7 @@
 					type="submit"
 					variant="ghost"
 				>
-					<Send class="h-4 w-4" />
+					<ArrowBigUp class="h-5 w-5" />
 				</Button>
 			</div>
 		</form>
@@ -211,15 +206,3 @@
 	</div>
 </div>
 
-<style>
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
