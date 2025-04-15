@@ -18,7 +18,7 @@
         {
             title: "What Information Do We Collect?",
             content:
-                "We collect minimal personal information necessary for the functionality of our AI features. This may include unique user identifiers (UUIDs) or cookies required for the operation of AI services provided through third parties like Google Cloud AI and Hugging Face. We do not collect personal information you voluntarily provide unless you contact us or express interest in our services. We do not process sensitive information."
+                "We collect minimal personal information necessary for the functionality of our AI features. This may include unique user identifiers (UUIDs) or cookies required for the operation of AI services provided through third parties like Mistral AI. We do not collect personal information you voluntarily provide unless you contact us or express interest in our services. We do not process sensitive information."
         },
         {
             title: "How Do We Process Your Information?",
@@ -33,12 +33,12 @@
         {
             title: "Use of Cookies and Similar Technologies",
             content:
-                "We use cookies or similar technologies that are necessary for the functionality of our AI features, provided by partners like Google Cloud AI and Hugging Face. These are essential for the AI tools to operate. Most browsers allow you to manage cookies, but disabling necessary cookies might affect the functionality of our AI services."
+                "We use cookies or similar technologies that are necessary for the functionality of our AI features, provided by companies like Mistral AI. These are essential for the AI tools to operate. Most browsers allow you to manage cookies, but disabling necessary cookies might affect the functionality of our AI services."
         },
         {
             title: "When and With Whom Do We Share Your Information?",
             content:
-                "To provide AI functionalities, we may share the necessary information (like UUIDs or inputs) with our third-party AI Service Providers, specifically Google Cloud AI and Hugging Face. We have contracts with these providers to safeguard your information. They are instructed not to use your data for any other purpose and must protect it."
+                "To provide AI functionalities, we may share the necessary information (like UUIDs or inputs) with our third-party AI Service Providers, specifically Mistral AI."
         },
         {
             title: "How Long Do We Keep Your Information?",
