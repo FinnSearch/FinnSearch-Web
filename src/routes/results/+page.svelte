@@ -5,6 +5,7 @@
 <script>
     import * as Card from "$lib/components/ui/card/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
+    import { Skeleton } from "$lib/components/ui/skeleton";
     import { Building } from "lucide-svelte";
 
 
@@ -36,11 +37,9 @@
         }
     ];
 
-    // Function to save a city to favorites
-    function saveCity(city) {
-        // In a real app, this would save to local storage or a database
-        alert(`Added ${city} to favorites!`);
-    }
+    let isLoading = true;
+    setTimeout(() => {isLoading = false}, 2000)
+
 </script>
 
 <div class="max-w-3xl mx-auto">
@@ -58,6 +57,27 @@
     <div class="space-y-4">
         {#each cityMatches as match}
             <Card.Root class="overflow-hidden">
+                {#if isLoading}
+                    <div class="p-8">
+                        <div class="flex items-start">
+                            <div class="mr-5">
+                                    <Skeleton class="h-10 w-10 rounded-full"/>
+                            </div>
+                            <div class="flex-1">
+                                <div class="mb-1">
+                                    <Skeleton class="h-5 w-20"/>
+                                </div>
+
+                                    <Skeleton class="mt-3 h-5 w-[20%]"/>
+                                    <Skeleton class="mt-3 h-5 w-[75%]"/>
+
+                                <div class="mt-4 flex space-x-2">
+                                    <Skeleton class="mt-3 h-10 w-[25%]"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {:else}
                 <div class="p-8">
                     <div class="flex items-start">
                         <div class="mr-5">
@@ -78,6 +98,7 @@
                         </div>
                     </div>
                 </div>
+                {/if}
             </Card.Root>
         {/each}
     </div>
