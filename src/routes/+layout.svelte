@@ -31,7 +31,7 @@
 
 <ModeWatcher />
 <div class="flex min-h-screen">
-	<aside class="fixed right-0 top-0 z-50 w-12 flex flex-col h-full border pt-5">
+	<aside class="fixed right-0 top-0 z-50 w-12 flex flex-col h-full pt-5">
 
 		<nav class="flex flex-1 flex-col items-center space-y-8">
 			{#each navs as item}
