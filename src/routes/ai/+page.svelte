@@ -4,74 +4,103 @@
 </svelte:head>
 
 <script>
-	import { onMount, tick } from 'svelte';
+	import { onMount, tick, onDestroy } from 'svelte';
+	import {writable} from 'svelte/store';
+
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Send, ChevronDown } from 'lucide-svelte';
 
-	// Chat state
-	let messages = $state([
-		{
-			id: 1,
-			role: 'assistant',
-			content: 'Based on your preferences, I can help you find cities that match your lifestyle priorities. What specific aspects of city living are most important to you?'
-		}
-	]);
+	let messages = writable([]);
+	let currentMessage = writable('');
+
+	let websocket;
+	let clientId = crypto.randomUUID();
+	let isConnected = false;
 	let userInput = $state('');
 	let scrollContainer;
 
+	let messageInProgress = true;
+	let messageID = 0;
 
-	let nextId = 2;
-
-	// Example responses for demo purposes
-	const demoResponses = [
-		'Great! Based on your preferences for affordability, public transportation, and tech jobs, here are some Finnish cities to consider:\n\n1. Tampere - Growing tech hub with moderate cost of living\n2. Oulu - Emerging tech scene with excellent affordability\n3. Turku - University city with strong job market\n\nWould you like more details about any of these cities?',
-		'Tampere is Finland\'s second-largest urban area and a major tech hub. The city offers:\n\n• Affordable housing compared to Helsinki\n• Excellent public transit including trams and buses\n• Tech companies like Nokia, Telia, and numerous startups\n• Vibrant cultural scene with museums and music events\n• Beautiful location between two lakes\n\nThe average rent for a one-bedroom apartment is about €600-800 per month, significantly lower than Helsinki.',
-		'Looking at climate considerations, Finnish cities experience four distinct seasons with cold winters. Tampere averages -8°C in January and 17°C in July. Snow typically covers the ground from December through March. Southern cities like Turku have slightly milder winters, while northern cities like Oulu experience longer, colder winters with less daylight during winter months.'
-	];
+	let isThinking = false;
 
 
-	function handleSubmit() {
-		if (!userInput.trim()) return;
+	onMount(() => {
+		const uuid = localStorage.getItem('uuid') || clientId;
+		localStorage.setItem('uuid', uuid);
+		websocket = new WebSocket(`ws://localhost:8000/ws/${clientId}`);
+
+		websocket.onopen = () => {
+			isConnected = true;
+		}
+
+		websocket.onclose = () => {
+			isConnected = false;
+		}
+
+		websocket.onerror = () => {
+			isConnected = false;
+		}
 
 
-		messages = [...messages, {
-			id: nextId++,
-			role: 'user',
-			content: userInput
-		}];
+
+		websocket.onmessage = (event) =>
+		{
+			const data = JSON.parse(event.data);
+			isThinking = false;
+			if (data.content)
+				currentMessage.update(i => i + data.content);
+			if (data.status && data.status === 'complete') {
+				messageInProgress = true;
+				messageID++;
+
+				messages.update(msg => [
+					...msg,
+					{
+						id: messageID,
+						role: 'assistant',
+						content: $currentMessage,
+
+					}
+				])
+				currentMessage.set('');
+
+				}
+
+		}
 
 
-		userInput = '';
+	})
 
 
-		// Simulation
-		setTimeout(() => {
 
-			const responseIndex = Math.floor(Math.random() * demoResponses.length);
-			messages = [...messages, {
-				id: nextId++,
-				role: 'assistant',
-				content: demoResponses[responseIndex]
-			}];
-		}, 1000);
+
+
+
+	function sendMessage() {
+		if (userInput.trim()) {
+			messageID++;
+			messages.update(msg => [
+				...msg,
+				{
+					id: messageID,
+					role: 'user',
+					content: userInput,
+				}
+			])
+
+			isThinking = true;
+			websocket.send(JSON.stringify({content: userInput}));
+			userInput = '';
+		}
 	}
 
 
-	function startOver() {
-		messages = [
-			{
-				id: 1,
-				role: 'assistant',
-				content: 'Based on your preferences, I can help you find cities that match your lifestyle priorities. What specific aspects of city living are most important to you?'
-			}
-		];
-		nextId = 2;
 
 
-	}
 
 	$effect.pre(() => {
 		messages;
@@ -106,7 +135,7 @@
 			class="flex-1 overflow-y-auto p-4 pb-0"
 		>
 
-			{#each messages as message (message.id)}
+			{#each $messages as message (message.id)}
 				<div
 					class="mb-4 flex {message.role === 'assistant' ? 'justify-start' : 'justify-end'}"
 				>
@@ -119,13 +148,19 @@
 							</div>
 							<div
 								class="text-muted-foreground rounded-lg p-3 bg-{message.role === 'assistant' ? 'transparent' : 'muted'}">
+
 								{message.content}
 							</div>
 						</div>
 					</div>
-
 				</div>
 			{/each}
+
+
+
+
+
+
 			<div class="h-4"></div> <!-- Extra space at bottom for better scrolling -->
 		</div>
 
@@ -135,7 +170,7 @@
 		<!-- Message input area -->
 		<form
 			class="flex items-end gap-2 p-4"
-			on:submit|preventDefault={handleSubmit}
+			on:submit|preventDefault={sendMessage}
 		>
 			<div class="relative flex-1">
 				<Input
@@ -170,7 +205,6 @@
 
 		<Button
 			disabled={messages.length <= 2}
-			on:click={startOver}
 		>
 			Clear
 		</Button>
