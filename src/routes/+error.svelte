@@ -3,9 +3,7 @@
     import { Separator } from "$lib/components/ui/separator/index.js";
 </script>
 
-<svelte:head>
-    <title>FinnSearch</title>
-</svelte:head>
+
 
 <div class="flex items-center justify-center h-full">
     <div class="flex items-center space-x-2 h-8">
