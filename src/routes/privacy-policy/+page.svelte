@@ -1,14 +1,8 @@
-<svelte:head>
-    <title>Privacy Policy - FinnSearch</title>
-</svelte:head>
-
-
 <script>
     import { Card, CardContent, CardHeader, CardTitle } from "$lib/components/ui/card";
     import * as Accordion from "$lib/components/ui/accordion";
-    import { cn } from "$lib/utils";
 
-    // Define the content for the privacy policy sections
+
     const privacyPolicyContent = [
         {
             title: "Introduction",
