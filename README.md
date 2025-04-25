@@ -17,8 +17,7 @@
 
 <div align = "center">
 
-Demo versions:
-...
+Demo version: [website](206.168.214.214/)
 
 </div>
 <p align="center">
