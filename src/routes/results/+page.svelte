@@ -111,7 +111,7 @@
 
     <!-- Navigation buttons -->
     <div class="mt-8 flex justify-center space-x-8">
-        <Button href="/" variant="outline">← Home</Button>
-        <Button href="/quiz">Take quiz again</Button>
+        <Button href="/" variant="outline">{$t('quizResults_home')}</Button>
+        <Button href="/quiz">{$t('quizResults_quiz_again')}</Button>
     </div>
 </div>

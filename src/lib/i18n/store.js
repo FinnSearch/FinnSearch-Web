@@ -55,6 +55,8 @@ export const translations = {
 		quizResults_header: 'Your Perfect City Matches',
 		quizResults_description: 'Based on your lifestyle preferences, we\'ve found these cities that match your criteria',
 		quizResults_match: '% match',
+		quizResults_home: '← Home',
+		quizResults_quiz_again: 'Take quiz again',
 
 
 		AIHeader: 'Find with AI',
@@ -102,6 +104,8 @@ export const translations = {
 		quizResults_header: 'Täydelliset Kaupunkivastineesi',
 		quizResults_description: 'Perustuen elämäntapatoiveisiisi, olemme löytäneet nämä kaupungit, jotka täyttävät kriteerisi',
 		quizResults_match: '% vastaavuus',
+		quizResults_home: '← Koti',
+		quizResults_quiz_again: 'Tee visailu uudelleen',
 
 		AIHeader: 'Löydä tekoälyn avulla',
 		AI_description: 'Kysy muutama kysymys, jotta löydämme sopivan kaupungin',
