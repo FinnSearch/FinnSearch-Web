@@ -100,7 +100,7 @@
 		};
 	});
 
-	// Sending message to WebSocket
+
 	function sendMessage() {
 		if (userInput.trim()) {
 			messageID++;
@@ -123,6 +123,11 @@
 			websocket.send(JSON.stringify({ content: userInput }));
 			userInput = '';
 		}
+	}
+
+	function clearMessages() {
+		websocket.send(JSON.stringify({ content: "clear_history"}));
+		messages.length = 0;
 	}
 
 	// Auto-scroll to bottom on message update
@@ -234,7 +239,11 @@
 			Powered by the<br> Mistral-small model
 		</p>
 
-		<Button class="text-muted-foreground" disabled={messages.length <= 2} variant="secondary">
+		<Button
+			on:click={() => {clearMessages()}}
+			class="text-muted-foreground"
+			disabled={messages.length <= 2}
+			variant="secondary">
 			{$t('AI_clear')}
 		</Button>
 	</div>
